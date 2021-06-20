@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
@@ -36,6 +37,7 @@ func main() {
 // -------------------- HTTP HANDLERS
 func (ps *Pastes) AddPaste(c *gin.Context) {
 	np := Paste{
+		ID:      uuid.New().String(),
 		Name:    c.PostForm("name"),
 		Created: time.Now(),
 		Body:    c.PostForm("body"),
