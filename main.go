@@ -43,6 +43,7 @@ func (ps *Pastes) AddPaste(c *gin.Context) {
 	}
 	NewPaste.ID = uuid.New().String()
 	NewPaste.Created = time.Now()
+
 	all, err := ps.Add(NewPaste)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
