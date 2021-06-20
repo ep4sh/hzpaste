@@ -9,6 +9,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+var (
+	ErrNotFound  = errors.New("Paste not found")
+	ErrInvalidID = errors.New("Product UUID is invalid")
+)
+
 type Paste struct {
 	ID      string    `json:"id"`
 	Name    string    `json:"name" binding:"required"`
@@ -20,16 +25,13 @@ type Pastes struct {
 	PasteList []Paste
 }
 
-var (
-	ErrNotFound = errors.New("Paste not found")
-)
-
 func main() {
 	route := gin.Default()
 
 	pastes := Pastes{}
 
 	route.GET("/pastes", pastes.ListPastes)
+	route.GET("/pastes/:id", pastes.GetPaste)
 	route.POST("/pastes", pastes.AddPaste)
 	route.Run(":8888")
 }
@@ -62,6 +64,17 @@ func (ps *Pastes) ListPastes(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"pastes": all})
 }
 
+func (ps *Pastes) GetPaste(c *gin.Context) {
+	id := c.Param("id")
+	paste, err := ps.Get(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"paste": paste})
+}
+
 // -------------------- HANDLERS
 func (ps *Pastes) Add(np Paste) (*Paste, error) {
 	ps.PasteList = append(ps.PasteList, np)
@@ -69,9 +82,22 @@ func (ps *Pastes) Add(np Paste) (*Paste, error) {
 }
 
 func (ps *Pastes) List() ([]Paste, error) {
-	var EmptyPastes []Paste
 	if ps.PasteList == nil {
-		return EmptyPastes, ErrNotFound
+		return nil, ErrNotFound
 	}
 	return ps.PasteList, nil
+}
+
+func (ps *Pastes) Get(id string) (*Paste, error) {
+	if _, err := uuid.Parse(id); err != nil {
+		return nil, ErrInvalidID
+	}
+
+	for i, p := range ps.PasteList {
+		if p.ID == id {
+			return &ps.PasteList[i], nil
+
+		}
+	}
+	return nil, ErrNotFound
 }
