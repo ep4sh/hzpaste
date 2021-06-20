@@ -11,9 +11,9 @@ import (
 
 type Paste struct {
 	ID      string    `json:"id"`
-	Name    string    `json:"name"`
+	Name    string    `json:"name" binding:"required"`
 	Created time.Time `json:"created"`
-	Body    string    `json:"body"`
+	Body    string    `json:"body" binding:"required"`
 }
 
 type Pastes struct {
@@ -36,15 +36,16 @@ func main() {
 
 // -------------------- HTTP HANDLERS
 func (ps *Pastes) AddPaste(c *gin.Context) {
-	np := Paste{
-		ID:      uuid.New().String(),
-		Name:    c.PostForm("name"),
-		Created: time.Now(),
-		Body:    c.PostForm("body"),
+	var NewPaste Paste
+	if err := c.ShouldBindJSON(&NewPaste); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	all, err := ps.Add(np)
+	NewPaste.ID = uuid.New().String()
+	NewPaste.Created = time.Now()
+	all, err := ps.Add(NewPaste)
 	if err != nil {
-		c.JSON(http.StatusNoContent, gin.H{"pastes": all})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	c.JSON(http.StatusOK, gin.H{"pastes": all})
@@ -53,7 +54,7 @@ func (ps *Pastes) AddPaste(c *gin.Context) {
 func (ps *Pastes) ListPastes(c *gin.Context) {
 	all, err := ps.List()
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"pastes": all})
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
