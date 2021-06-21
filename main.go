@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -10,8 +11,14 @@ import (
 )
 
 var (
-	ErrNotFound  = errors.New("Paste not found")
-	ErrInvalidID = errors.New("Product UUID is invalid")
+	ErrNotFound           = errors.New("Paste not found")
+	ErrInvalidID          = errors.New("Product UUID is invalid")
+	ErrNotEnoughDataForGC = errors.New("Not enough data for GC")
+)
+
+const (
+	GCItems = 5
+	GCDays  = 3
 )
 
 type Paste struct {
@@ -32,6 +39,7 @@ func main() {
 
 	route.GET("/pastes", pastes.ListPastes)
 	route.GET("/pastes/:id", pastes.GetPaste)
+	route.GET("/gc", pastes.GC)
 	route.POST("/pastes", pastes.AddPaste)
 	route.DELETE("/killall", pastes.KillPastes)
 	route.Run(":8888")
@@ -45,7 +53,7 @@ func (ps *Pastes) AddPaste(c *gin.Context) {
 		return
 	}
 	NewPaste.ID = uuid.New().String()
-	NewPaste.Created = time.Now()
+	NewPaste.Created = time.Now().Add(-24 * time.Hour * 10)
 
 	all, err := ps.Add(NewPaste)
 	if err != nil {
@@ -86,6 +94,16 @@ func (ps *Pastes) KillPastes(c *gin.Context) {
 	c.JSON(http.StatusNoContent, gin.H{"pastes": clearAll})
 }
 
+func (ps *Pastes) GC(c *gin.Context) {
+	gcItems, err := ps.GCRun()
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"gc_items": gcItems})
+}
+
 // -------------------- HANDLERS
 func (ps *Pastes) Add(np Paste) (*Paste, error) {
 	ps.PasteList = append(ps.PasteList, np)
@@ -119,4 +137,20 @@ func (ps *Pastes) Kill() ([]Paste, error) {
 	}
 	ps.PasteList = nil
 	return ps.PasteList, nil
+}
+
+func (ps *Pastes) GCRun() (int, error) {
+	if len(ps.PasteList) <= GCItems {
+		return 0, ErrNotEnoughDataForGC
+	}
+
+	today := time.Now()
+	gcDate := today.Add(-24 * time.Hour * GCDays)
+
+	if gcDate.After(ps.PasteList[GCItems].Created) {
+		log.Println("Cleanup old data..", ps.PasteList[GCItems])
+		ps.PasteList = ps.PasteList[GCItems:]
+	}
+
+	return GCItems, nil
 }
