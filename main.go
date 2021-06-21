@@ -33,6 +33,7 @@ func main() {
 	route.GET("/pastes", pastes.ListPastes)
 	route.GET("/pastes/:id", pastes.GetPaste)
 	route.POST("/pastes", pastes.AddPaste)
+	route.DELETE("/killall", pastes.KillPastes)
 	route.Run(":8888")
 }
 
@@ -75,6 +76,16 @@ func (ps *Pastes) GetPaste(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"paste": paste})
 }
 
+func (ps *Pastes) KillPastes(c *gin.Context) {
+	clearAll, err := ps.Kill()
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusNoContent, gin.H{"pastes": clearAll})
+}
+
 // -------------------- HANDLERS
 func (ps *Pastes) Add(np Paste) (*Paste, error) {
 	ps.PasteList = append(ps.PasteList, np)
@@ -100,4 +111,12 @@ func (ps *Pastes) Get(id string) (*Paste, error) {
 		}
 	}
 	return nil, ErrNotFound
+}
+
+func (ps *Pastes) Kill() ([]Paste, error) {
+	if ps.PasteList == nil {
+		return nil, ErrNotFound
+	}
+	ps.PasteList = nil
+	return ps.PasteList, nil
 }
