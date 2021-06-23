@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
+	"github.com/robfig/cron/v3"
 )
 
 // Predefined errors identify expected failure conditions.
@@ -19,8 +20,9 @@ var (
 
 // Predefined consts identify PGC behaviour.
 const (
-	GCItems = 5
-	GCDays  = 3
+	GCItems    = 5
+	GCDays     = 3
+	GCSchedule = "* * * * *"
 )
 
 // Paste is an item we store.
@@ -37,17 +39,37 @@ type Pastes struct {
 }
 
 func main() {
+	// Register gin defaul router with Logger and Recover middleware.
 	route := gin.Default()
 
-	// Register handlers.
+	// Register PasteList.
 	pastes := Pastes{}
+	// Register PGC cron.
+	pastes.CheckPGCCron()
 
+	// Register handlers.
 	route.GET("/pastes", pastes.ListPastes)
 	route.GET("/pastes/:id", pastes.GetPaste)
 	route.GET("/gc", pastes.PGC)
 	route.POST("/pastes", pastes.AddPaste)
 	route.DELETE("/killall", pastes.KillPastes)
 	route.Run(":8888")
+}
+
+// CheckPGCCron schedules PGCRun() as cron job according to the GCSchedule.
+func (ps *Pastes) CheckPGCCron() {
+	log.Println("Registering new PGC cron job")
+	c := cron.New()
+	c.AddFunc(GCSchedule, func() {
+		log.Println("Scheduling PGC via cron")
+		gcItems, err := ps.PGCRun()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Println("PGC cleaned up obsolete data: ", gcItems)
+	})
+	c.Start()
 }
 
 // -------------------- HTTP HANDLERS.
@@ -166,7 +188,7 @@ func (ps *Pastes) PGCRun() (int, error) {
 	gcDate := today.Add(-24 * time.Hour * GCDays)
 
 	if gcDate.After(ps.PasteList[GCItems].Created) {
-		log.Println("Cleanup old data..", ps.PasteList[GCItems])
+		log.Println("PGC found obsolete data: ", GCItems)
 		ps.PasteList = ps.PasteList[GCItems:]
 	}
 
