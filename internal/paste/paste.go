@@ -12,7 +12,7 @@ import (
 const (
 	GCItems    = 5
 	GCDays     = 3
-	GCSchedule = "*/10 * * * *"
+	GCSchedule = "1 * * * *"
 )
 
 // Predefined errors identify expected failure conditions.
@@ -23,21 +23,21 @@ var (
 )
 
 type Storage struct {
-	PasteList []Paste
+	pasteList []Paste
 }
 
-// Add adds a Paste to the slice of Pastes (PasteList).
+// Add adds a Paste to the slice of Pastes (pasteList).
 func (s *Storage) Add(np Paste) (*Paste, error) {
-	s.PasteList = append(s.PasteList, np)
+	s.pasteList = append(s.pasteList, np)
 	return &np, nil
 }
 
 // List gets all Pastes from the slice of Pastes.
 func (s *Storage) List() ([]Paste, error) {
-	if s.PasteList == nil {
+	if s.pasteList == nil {
 		return nil, ErrNotFound
 	}
-	return s.PasteList, nil
+	return s.pasteList, nil
 }
 
 // Get retrieve a single paste identified by id.
@@ -46,9 +46,9 @@ func (s *Storage) Get(id string) (*Paste, error) {
 		return nil, ErrInvalidID
 	}
 
-	for i, p := range s.PasteList {
+	for i, p := range s.pasteList {
 		if p.ID == id {
-			return &s.PasteList[i], nil
+			return &s.pasteList[i], nil
 
 		}
 	}
@@ -57,26 +57,26 @@ func (s *Storage) Get(id string) (*Paste, error) {
 
 // Kill purges list of Pastes.
 func (s *Storage) Kill() ([]Paste, error) {
-	if s.PasteList == nil {
+	if s.pasteList == nil {
 		return nil, ErrNotFound
 	}
-	s.PasteList = nil
-	return s.PasteList, nil
+	s.pasteList = nil
+	return s.pasteList, nil
 }
 
 // PGCRun checks if Pastes' creation dates are older than `GCDays`
 // and removes `GCItems` of pastes from the slice of Pastes.
 func (s *Storage) PGCRun() (int, error) {
-	if len(s.PasteList) <= GCItems {
+	if len(s.pasteList) <= GCItems {
 		return 0, ErrNotEnoughDataForGC
 	}
 
 	today := time.Now()
 	gcDate := today.Add(-24 * time.Hour * GCDays)
 
-	if gcDate.After(s.PasteList[GCItems].Created) {
+	if gcDate.After(s.pasteList[GCItems].Created) {
 		log.Println("PGC found obsolete data: ", GCItems)
-		s.PasteList = s.PasteList[GCItems:]
+		s.pasteList = s.pasteList[GCItems:]
 	}
 
 	return GCItems, nil

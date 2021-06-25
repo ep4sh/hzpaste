@@ -5,12 +5,11 @@ import (
 	"os"
 
 	"github.com/ep4sh/hzpaste/cmd/hzpaste-api/internal/handlers"
+	"github.com/ep4sh/hzpaste/internal/paste"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Register PGC cron.
-	handlers.SchedulePGCCron()
 	if err := run(); err != nil {
 		log.Println("Shutting down", "error:", err)
 		os.Exit(1)
@@ -21,12 +20,18 @@ func run() error {
 	// Register gin defaul router with Logger and Recover middleware.
 	route := gin.Default()
 
+	// Register PasteList.
+	pastes := paste.Storage{}
+
+	// Register PGC cron task.
+	handlers.SchedulePGCCron(&pastes)
+
 	// Register handlers.
-	route.GET("/pastes", handlers.ListPastes)
-	route.GET("/pastes/:id", handlers.GetPaste)
-	route.GET("/gc", handlers.PGC)
-	route.POST("/pastes", handlers.AddPaste)
-	route.DELETE("/killall", handlers.KillPastes)
+	route.GET("/pastes", handlers.ListPastesH(&pastes))
+	route.GET("/pastes/:id", handlers.GetPasteH(&pastes))
+	route.GET("/gc", handlers.PGCH(&pastes))
+	route.POST("/pastes", handlers.AddPasteH(&pastes))
+	route.DELETE("/killall", handlers.KillPastesH(&pastes))
 	if err := route.Run(":8888"); err != nil {
 		return err
 	}
