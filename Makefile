@@ -1,13 +1,13 @@
 .SILENT:
 
 build:
-	go build cmd/hzpaste-api/main.go
+	go build -o hzpaste-api cmd/hzpaste-api/main.go
 
 run:
 	go run cmd/hzpaste-api/main.go
 
-release:
-	GIN_MODE=release go run cmd/hzpaste-api/main.go
+release: build
+	GIN_MODE=release ./hzpaste-api
 
 swag-init:
 	cd cmd/hzpaste-api/ && swag init -g main.go -o internal/docs/ --parseDependency --parseInternal
