@@ -12,7 +12,7 @@ import (
 const (
 	GCItems    = 5
 	GCDays     = 3
-	GCSchedule = "1 * * * *"
+	GCSchedule = "@hourly"
 )
 
 // Predefined errors identify expected failure conditions.

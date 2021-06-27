@@ -48,7 +48,7 @@ func AddPasteH(p *paste.Storage) gin.HandlerFunc {
 			return
 		}
 		NewPaste.ID = uuid.New().String()
-		NewPaste.Created = time.Now().Add(-24 * time.Hour * 10)
+		NewPaste.Created = time.Now()
 
 		np, err := p.Add(NewPaste)
 		if err != nil {
