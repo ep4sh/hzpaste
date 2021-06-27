@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/robfig/cron"
+	_ "github.com/swaggo/swag/example/celler/httputil"
+	_ "github.com/swaggo/swag/example/celler/model"
 )
 
 // SchedulePGCCron schedules PGCRun() as cron job according to the GCSchedule.
@@ -29,7 +31,15 @@ func SchedulePGCCron(ps *paste.Storage) {
 
 // -------------------- HTTP HANDLERS.
 
-// AddPaste validates the body of a request to create a new paste.
+// AddPasteH godoc
+// @Summary add a paste
+// @Description add new paste
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} paste.Paste "new_paste"
+// @Router /pastes [post]
+// AddPasteH returns a handler that validates the body of a request to create
+// a new paste.
 func AddPasteH(p *paste.Storage) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		var NewPaste paste.Paste
@@ -40,18 +50,25 @@ func AddPasteH(p *paste.Storage) gin.HandlerFunc {
 		NewPaste.ID = uuid.New().String()
 		NewPaste.Created = time.Now().Add(-24 * time.Hour * 10)
 
-		all, err := p.Add(NewPaste)
+		np, err := p.Add(NewPaste)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		}
 
-		c.JSON(http.StatusOK, gin.H{"pastes": all})
+		c.JSON(http.StatusOK, gin.H{"new_paste": np})
 	}
 
 	return gin.HandlerFunc(fn)
 }
 
-// ListPastes shows all pastes.
+// ListPastesH godoc
+// @Summary shows all pastes
+// @Description get pastes list
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} paste.Paste "pastes"
+// @Router /pastes [get]
+// ListPastesH returns a handler that shows all pastes.
 func ListPastesH(p *paste.Storage) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		all, err := p.List()
@@ -65,7 +82,17 @@ func ListPastesH(p *paste.Storage) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// GetPaste finds a single paste identified by an ID in the request URL.
+// GetPasteH godoc
+// @Summary finds a single paste identified by an ID in the request URL.
+// @Description get paste by ID
+// @ID get-string-by-int
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Paste ID"
+// @Success 200 {object} paste.Paste "paste"
+// @Router /pastes/{id} [get]
+// GetPasteH returns a handler that finds a single paste identified by an
+// ID in the request URL.
 func GetPasteH(p *paste.Storage) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		id := c.Param("id")
@@ -80,7 +107,14 @@ func GetPasteH(p *paste.Storage) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// KillPastes pugres all pastes.
+// KillPastesH godoc
+// @Summary purges all pastes
+// @Description returns empty slice for Pastes
+// @Produce  json
+// @Success 200 {array} paste.Paste "pastes"
+// @Router /pastes [delete]
+// KillPastesH returns a handler that pugres all pastes by clearing the
+// pastes list.
 func KillPastesH(p *paste.Storage) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		clearAll, err := p.Kill()
@@ -94,8 +128,13 @@ func KillPastesH(p *paste.Storage) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// TODO: Remove handler, add goroutine.
-// PGC (PasteGC) triggers obsolete data collection.
+// PGCH godoc
+// @Summary triggers obsolete data collection and removes it
+// @Description returns count of the removed data
+// @Produce  json
+// @Success 200 {array} int "gc"
+// @Router /gc [get]
+// PGCH returns a handler that triggers obsolete data collection.
 func PGCH(p *paste.Storage) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		gcItems, err := p.PGCRun()

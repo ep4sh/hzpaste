@@ -1,0 +1,97 @@
+definitions:
+  paste.Paste:
+    properties:
+      body:
+        type: string
+      created:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    required:
+    - body
+    - name
+    type: object
+info:
+  contact:
+    email: ep4sh2k@gm[a]il.com
+    name: API Support
+    url: http://ep4sh.cc
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /gc:
+    get:
+      description: returns count of the removed data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: gc
+          schema:
+            items:
+              type: integer
+            type: array
+      summary: triggers obsolete data collection and removes it
+  /pastes:
+    delete:
+      description: returns empty slice for Pastes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pastes
+          schema:
+            items:
+              $ref: '#/definitions/paste.Paste'
+            type: array
+      summary: purges all pastes
+    get:
+      consumes:
+      - application/json
+      description: get pastes list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pastes
+          schema:
+            items:
+              $ref: '#/definitions/paste.Paste'
+            type: array
+      summary: shows all pastes
+    post:
+      consumes:
+      - application/json
+      description: add new paste
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: new_paste
+          schema:
+            $ref: '#/definitions/paste.Paste'
+      summary: add a paste
+  /pastes/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get paste by ID
+      operationId: get-string-by-int
+      parameters:
+      - description: Paste ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: paste
+          schema:
+            $ref: '#/definitions/paste.Paste'
+      summary: finds a single paste identified by an ID in the request URL.
+swagger: "2.0"
