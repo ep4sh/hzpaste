@@ -11,6 +11,7 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/robfig/cron v1.2.0
+	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
 	github.com/swaggo/swag/example/celler v0.0.0-20210326183817-17c1766b6349

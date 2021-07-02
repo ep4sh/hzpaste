@@ -18,7 +18,7 @@ const (
 // Predefined errors identify expected failure conditions.
 var (
 	ErrNotFound           = errors.New("Paste not found")
-	ErrInvalidID          = errors.New("Product UUID is invalid")
+	ErrInvalidID          = errors.New("Paste UUID is invalid")
 	ErrNotEnoughDataForGC = errors.New("Not enough data for GC")
 )
 
