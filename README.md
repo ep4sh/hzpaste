@@ -4,6 +4,11 @@
 `HZPaste` uses [gin](https://github.com/gin-gonic/gin) web framework.
 By default HZPaste running on port `:8888`
 
+## Run tests
+```
+make test
+```
+
 ## Run debug verion
 ```
 make run
@@ -23,5 +28,5 @@ http://localhost:8888/swagger/index.html
 ```
 
 ### PGC
-HZPaste has PGC (Paste Garbage Collector), that sweep and delete obsolete
+HZPaste has PGC (Paste Garbage Collector), that sweeps and removes obsolete
 pastes from it's storage.
