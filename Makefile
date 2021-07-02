@@ -1,7 +1,7 @@
 .SILENT:
 
 build:
-	go build -o hzpaste-api cmd/hzpaste-api/main.go
+	go build -o hzpaste-api.bin cmd/hzpaste-api/main.go
 
 test:
 	go test -v ./cmd/hzpaste-api/
