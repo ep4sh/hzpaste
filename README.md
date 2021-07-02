@@ -1,8 +1,8 @@
 # HZPaste (REST API)
 
-`HZPaste` is a simple REST API app, that serve source code snippets.
-`HZPaste` uses [gin](https://github.com/gin-gonic/gin) web framework.
-By default HZPaste running on port `:8888`
+`HZPaste` is a simple REST API app, that serve source code snippets.  
+`HZPaste` uses [gin](https://github.com/gin-gonic/gin) web framework.  
+By default HZPaste running on port `:8888`  
 
 ## Run tests
 ```
