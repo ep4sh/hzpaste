@@ -77,7 +77,8 @@ func (s *Storage) PGCRun() (int, error) {
 	if gcDate.After(s.pasteList[GCItems].Created) {
 		log.Println("PGC found obsolete data: ", GCItems)
 		s.pasteList = s.pasteList[GCItems:]
+		return GCItems, nil
 	}
 
-	return GCItems, nil
+	return 0, nil
 }
