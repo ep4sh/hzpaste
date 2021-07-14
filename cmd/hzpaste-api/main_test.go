@@ -108,3 +108,26 @@ func TestPasteAdd(t *testing.T) {
 	assert.Equal(t, p.Name, createdString["name"])
 	assert.Equal(t, p.Body, createdString["body"])
 }
+
+func TestKillPastes(t *testing.T) {
+
+	router := setupRouter()
+
+	newPaste := `{"name":"Very important paste",
+	              "body":"I can see the world!"}`
+	for i := 0; i < 2; i++ {
+		post := strings.NewReader(newPaste)
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("POST", "/pastes", post)
+		req.Header.Set("Content-Type", "application/json")
+		router.ServeHTTP(w, req)
+	}
+	req, _ := http.NewRequest("DELETE", "/killall", nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	OkClearPastes := `{"pastes":"null"}`
+
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, OkClearPastes, w.Body.String())
+}

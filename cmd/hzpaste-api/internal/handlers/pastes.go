@@ -117,13 +117,13 @@ func GetPasteH(p *paste.Storage) gin.HandlerFunc {
 // pastes list.
 func KillPastesH(p *paste.Storage) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		clearAll, err := p.Kill()
+		_, err := p.Kill()
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusNoContent, gin.H{"pastes": clearAll})
+		c.JSON(http.StatusOK, gin.H{"pastes": "null"})
 	}
 	return gin.HandlerFunc(fn)
 }
