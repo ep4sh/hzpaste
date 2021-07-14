@@ -19,6 +19,11 @@ make run
 make release
 ```
 
+## Generate swagger docs
+```
+make swag-init
+```
+
 ## Endpoints and features
 
 ### Swagger
