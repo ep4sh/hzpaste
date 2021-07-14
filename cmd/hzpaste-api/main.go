@@ -44,6 +44,7 @@ func setupRouter() *gin.Engine {
 	router.GET("/pastes", handlers.ListPastesH(&pastes))
 	router.GET("/pastes/:id", handlers.GetPasteH(&pastes))
 	router.GET("/gc", handlers.PGCH(&pastes))
+	router.GET("/ping", handlers.PingH(&pastes))
 	router.POST("/pastes", handlers.AddPasteH(&pastes))
 	router.DELETE("/killall", handlers.KillPastesH(&pastes))
 

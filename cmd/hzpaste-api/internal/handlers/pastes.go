@@ -147,3 +147,24 @@ func PGCH(p *paste.Storage) gin.HandlerFunc {
 	}
 	return gin.HandlerFunc(fn)
 }
+
+// PingH godoc
+// @Summary provides health checks
+// @Description provides health checks
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} bool "OK"
+// @Router /ping [get]
+// GetPasteH returns a handler that provides health check
+func PingH(p *paste.Storage) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		ready, err := p.Ping()
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"ready": ready})
+	}
+	return gin.HandlerFunc(fn)
+}

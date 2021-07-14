@@ -131,3 +131,17 @@ func TestKillPastes(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, OkClearPastes, w.Body.String())
 }
+
+func TestPing(t *testing.T) {
+
+	router := setupRouter()
+
+	req, _ := http.NewRequest("GET", "/ping", nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	Ready := `{"ready":true}`
+
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, Ready, w.Body.String())
+}

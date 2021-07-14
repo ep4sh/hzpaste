@@ -20,6 +20,7 @@ var (
 	ErrNotFound           = errors.New("Paste not found")
 	ErrInvalidID          = errors.New("Paste UUID is invalid")
 	ErrNotEnoughDataForGC = errors.New("Not enough data for GC")
+	ErrStorageNotReady    = errors.New("Storage not ready")
 )
 
 type Storage struct {
@@ -81,4 +82,13 @@ func (s *Storage) PGCRun() (int, error) {
 	}
 
 	return 0, nil
+}
+
+// Ping checks if Storage has been created
+func (s *Storage) Ping() (bool, error) {
+	if s == nil {
+		return false, ErrStorageNotReady
+	}
+
+	return true, nil
 }
