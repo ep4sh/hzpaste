@@ -1,13 +1,27 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"os"
+	"path"
+	"path/filepath"
+	"runtime"
+	"strings"
+
 	_ "github.com/ep4sh/hzpaste/cmd/hzpaste-api/internal/docs"
 	"github.com/ep4sh/hzpaste/cmd/hzpaste-api/internal/handlers"
 	"github.com/ep4sh/hzpaste/internal/paste"
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"github.com/tkanos/gonfig"
 )
+
+type Configuration struct {
+	Host string `env:"HZPASTE_HOST"`
+	Port string `env:"HZPASTE_PORT"`
+}
 
 // @contact.name API Support
 // @contact.url http://ep4sh.cc
@@ -40,6 +54,25 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
+	configuration := Configuration{}
+	err := gonfig.GetConf(getFileName(), &configuration)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	endpoint := fmt.Sprintf("%s:%s", configuration.Host, configuration.Port)
 	router := setupRouter()
-	router.Run(":8888")
+	router.Run(endpoint)
+}
+
+func getFileName() string {
+	env := os.Getenv("ENV")
+	if len(env) == 0 {
+		env = "development"
+	}
+	filename := []string{"internal/config/", "config.", env, ".json"}
+	_, dirname, _, _ := runtime.Caller(0)
+	filePath := path.Join(filepath.Dir(dirname), strings.Join(filename, ""))
+
+	return filePath
 }

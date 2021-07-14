@@ -15,6 +15,7 @@ require (
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
 	github.com/swaggo/swag/example/celler v0.0.0-20210326183817-17c1766b6349
+	github.com/tkanos/gonfig v0.0.0-20210106201359-53e13348de2f
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/sys v0.0.0-20210616094352-59db8d763f22 // indirect
 	golang.org/x/tools v0.1.4 // indirect
