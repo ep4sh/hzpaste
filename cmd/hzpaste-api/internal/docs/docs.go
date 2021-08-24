@@ -140,6 +140,26 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/ping": {
+            "get": {
+                "description": "provides health checks",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "provides health checks",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

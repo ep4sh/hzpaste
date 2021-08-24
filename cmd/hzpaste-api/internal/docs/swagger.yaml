@@ -94,4 +94,17 @@ paths:
           schema:
             $ref: '#/definitions/paste.Paste'
       summary: finds a single paste identified by an ID in the request URL.
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: provides health checks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+      summary: provides health checks
 swagger: "2.0"
