@@ -88,7 +88,7 @@ func ListPastesH(p *paste.Storage) gin.HandlerFunc {
 // @ID get-string-by-int
 // @Accept  json
 // @Produce  json
-// @Param id path int true "Paste ID"
+// @Param id path string true "Paste ID"
 // @Success 200 {object} paste.Paste "paste"
 // @Router /pastes/{id} [get]
 // GetPasteH returns a handler that finds a single paste identified by an

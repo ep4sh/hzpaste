@@ -124,7 +124,7 @@ var doc = `{
                 "operationId": "get-string-by-int",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Paste ID",
                         "name": "id",
                         "in": "path",
