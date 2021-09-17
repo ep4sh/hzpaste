@@ -5,8 +5,6 @@ import (
 	"log"
 	"os"
 	"path"
-	"path/filepath"
-	"runtime"
 	"strings"
 
 	_ "github.com/ep4sh/hzpaste/cmd/hzpaste-api/internal/docs"
@@ -55,13 +53,8 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-	configuration := Configuration{}
-	err := gonfig.GetConf(getFileName(), &configuration)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	endpoint := fmt.Sprintf("%s:%s", configuration.Host, configuration.Port)
+	config := initConfig()
+	endpoint := fmt.Sprintf("%s:%s", config.Host, config.Port)
 	router := setupRouter()
 	router.Run(endpoint)
 }
@@ -71,9 +64,25 @@ func getFileName() string {
 	if len(env) == 0 {
 		env = "development"
 	}
-	filename := []string{"internal/config/", "config.", env, ".json"}
-	_, dirname, _, _ := runtime.Caller(0)
-	filePath := path.Join(filepath.Dir(dirname), strings.Join(filename, ""))
+	filename := []string{"config/", "config.", env, ".json"}
+	filePath := path.Join(strings.Join(filename, ""))
 
 	return filePath
+}
+
+func initConfig() Configuration {
+	configuration := Configuration{}
+	host := os.Getenv("HZPASTE_HOST")
+	port := os.Getenv("HZPASTE_PORT")
+	if len(port) > 0 && len(host) > 0 {
+		configuration.Host = host
+		configuration.Port = port
+	} else {
+		err := gonfig.GetConf(getFileName(), &configuration)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	return configuration
 }
