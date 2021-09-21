@@ -64,7 +64,7 @@ func getFileName() string {
 	if len(env) == 0 {
 		env = "development"
 	}
-	filename := []string{"config/", "config.", env, ".json"}
+	filename := []string{"config.", env, ".json"}
 	filePath := path.Join(strings.Join(filename, ""))
 
 	return filePath
@@ -72,14 +72,11 @@ func getFileName() string {
 
 func initConfig() Configuration {
 	configuration := Configuration{}
-	host := os.Getenv("HZPASTE_HOST")
-	port := os.Getenv("HZPASTE_PORT")
-	if len(port) > 0 && len(host) > 0 {
-		configuration.Host = host
-		configuration.Port = port
-	} else {
+	if len(configuration.Port) == 0 || len(configuration.Host) == 0 {
 		err := gonfig.GetConf(getFileName(), &configuration)
 		if err != nil {
+			log.Println("Cannot initialize configuration:")
+			log.Println("Please provide HZPASTE_HOST, HZPASTE_PORT environment variables or configuration file")
 			log.Fatal(err)
 		}
 	}
