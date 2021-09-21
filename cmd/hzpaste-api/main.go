@@ -59,7 +59,7 @@ func main() {
 	router.Run(endpoint)
 }
 
-func getFileName() string {
+func getConfigFileName() string {
 	env := os.Getenv("ENV")
 	if len(env) == 0 {
 		env = "development"
@@ -72,11 +72,11 @@ func getFileName() string {
 
 func initConfig() Configuration {
 	configuration := Configuration{
-		Port: os.Getenv("HZPASTE_HOST"),
-		Host: os.Getenv("HZPASTE_PORT"),
+		Port: os.Getenv("HZPASTE_PORT"),
+		Host: os.Getenv("HZPASTE_HOST"),
 	}
 	if len(configuration.Port) == 0 || len(configuration.Host) == 0 {
-		err := gonfig.GetConf(getFileName(), &configuration)
+		err := gonfig.GetConf(getConfigFileName(), &configuration)
 		if err != nil {
 			log.Println("Cannot initialize configuration:")
 			log.Println("Please provide HZPASTE_HOST and HZPASTE_PORT environment variables or configuration file")
