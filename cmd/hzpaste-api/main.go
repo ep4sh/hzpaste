@@ -71,12 +71,15 @@ func getFileName() string {
 }
 
 func initConfig() Configuration {
-	configuration := Configuration{}
+	configuration := Configuration{
+		Port: os.Getenv("HZPASTE_HOST"),
+		Host: os.Getenv("HZPASTE_PORT"),
+	}
 	if len(configuration.Port) == 0 || len(configuration.Host) == 0 {
 		err := gonfig.GetConf(getFileName(), &configuration)
 		if err != nil {
 			log.Println("Cannot initialize configuration:")
-			log.Println("Please provide HZPASTE_HOST, HZPASTE_PORT environment variables or configuration file")
+			log.Println("Please provide HZPASTE_HOST and HZPASTE_PORT environment variables or configuration file")
 			log.Fatal(err)
 		}
 	}
