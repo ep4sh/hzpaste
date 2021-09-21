@@ -4,6 +4,13 @@
 `HZPaste` uses [gin](https://github.com/gin-gonic/gin) web framework.
 By default HZPaste running on port `:8888`
 
+## Configuration
+
+HZPaste server can be configured using the environment variables:
+
+- HZPASTE_HOST
+- HZPASTE_PORT
+
 ## Run tests
 ```
 make test
