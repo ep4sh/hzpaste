@@ -2,26 +2,15 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"path"
-	"strconv"
-	"strings"
 
 	_ "github.com/ep4sh/hzpaste/cmd/hzpaste-api/internal/docs"
 	"github.com/ep4sh/hzpaste/cmd/hzpaste-api/internal/handlers"
+	"github.com/ep4sh/hzpaste/cmd/hzpaste-api/internal/hzconfig"
 	"github.com/ep4sh/hzpaste/internal/paste"
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"github.com/tkanos/gonfig"
 )
-
-type Configuration struct {
-	Host         string `env:"HZPASTE_HOST"`
-	Port         string `env:"HZPASTE_PORT"`
-	HerokuDeploy bool
-}
 
 // @contact.name API Support
 // @contact.url http://ep4sh.cc
@@ -55,48 +44,8 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-	config := initConfig()
+	config := hzconfig.InitConfig()
 	endpoint := fmt.Sprintf("%s:%s", config.Host, config.Port)
 	router := setupRouter()
 	router.Run(endpoint)
-}
-
-func getConfigFileName() string {
-	env := os.Getenv("ENV")
-	if len(env) == 0 {
-		env = "development"
-	}
-	filename := []string{"config.", env, ".json"}
-	filePath := path.Join(strings.Join(filename, ""))
-
-	return filePath
-}
-
-func getEnvAsBool(name string, defaultVal bool) bool {
-	valStr := os.Getenv(name)
-	if val, err := strconv.ParseBool(valStr); err == nil {
-		return val
-	}
-
-	return defaultVal
-}
-
-func initConfig() Configuration {
-	configuration := Configuration{
-		Port: os.Getenv("HZPASTE_PORT"),
-		Host: os.Getenv("HZPASTE_HOST"),
-	}
-	if getEnvAsBool("HEROKU_DEPLOY", false) {
-		configuration.Port = os.Getenv("PORT")
-	}
-	if len(configuration.Port) == 0 || len(configuration.Host) == 0 {
-		err := gonfig.GetConf(getConfigFileName(), &configuration)
-		if err != nil {
-			log.Println("Cannot initialize configuration:")
-			log.Println("Please provide HZPASTE_HOST and HZPASTE_PORT environment variables or configuration file")
-			log.Fatal(err)
-		}
-	}
-
-	return configuration
 }
