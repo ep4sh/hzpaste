@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 
 	_ "github.com/ep4sh/hzpaste/cmd/hzpaste-api/internal/docs"
@@ -17,8 +18,9 @@ import (
 )
 
 type Configuration struct {
-	Host string `env:"HZPASTE_HOST"`
-	Port string `env:"HZPASTE_PORT"`
+	Host         string `env:"HZPASTE_HOST"`
+	Port         string `env:"HZPASTE_PORT"`
+	HerokuDeploy bool
 }
 
 // @contact.name API Support
@@ -70,10 +72,22 @@ func getConfigFileName() string {
 	return filePath
 }
 
+func getEnvAsBool(name string, defaultVal bool) bool {
+	valStr := os.Getenv(name)
+	if val, err := strconv.ParseBool(valStr); err == nil {
+		return val
+	}
+
+	return defaultVal
+}
+
 func initConfig() Configuration {
 	configuration := Configuration{
 		Port: os.Getenv("HZPASTE_PORT"),
 		Host: os.Getenv("HZPASTE_HOST"),
+	}
+	if getEnvAsBool("HEROKU_DEPLOY", false) {
+		configuration.Port = os.Getenv("PORT")
 	}
 	if len(configuration.Port) == 0 || len(configuration.Host) == 0 {
 		err := gonfig.GetConf(getConfigFileName(), &configuration)
