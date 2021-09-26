@@ -1,8 +1,17 @@
-# HZPaste (REST API)
+![HZPaste](https://github.com/ep4sh/hzpaste/actions/workflows/go.yml/badge.svg?branch=master)  
 
-`HZPaste` is a simple REST API app, that serve source code snippets.
-`HZPaste` uses [gin](https://github.com/gin-gonic/gin) web framework.
+# HZPaste (REST API)
+**HZPaste** is a simple REST API app, that serve source code snippets.  
+**HZPaste** uses [gin](https://github.com/gin-gonic/gin) web framework.
 By default HZPaste running on port `:8888`
+
+## Configuration
+
+HZPaste server can be configured using the environment variables:
+```
+$ export HZPASTE_HOST=0.0.0.0
+$ export HZPASTE_PORT=9090
+```
 
 ## Run tests
 ```

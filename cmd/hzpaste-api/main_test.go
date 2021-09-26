@@ -13,6 +13,9 @@ import (
 
 func TestGCNotEnoughDataToCollect(t *testing.T) {
 
+	//TODO: add config to the router
+	// currently now way to Stop the router
+	_ = initConfig()
 	router := setupRouter()
 
 	w := httptest.NewRecorder()
@@ -27,6 +30,7 @@ func TestGCNotEnoughDataToCollect(t *testing.T) {
 
 func TestNoPastesFound(t *testing.T) {
 
+	_ = initConfig()
 	router := setupRouter()
 
 	w := httptest.NewRecorder()
@@ -41,6 +45,7 @@ func TestNoPastesFound(t *testing.T) {
 
 func TestInvalidPasteUUID(t *testing.T) {
 
+	_ = initConfig()
 	router := setupRouter()
 
 	wrongUUID := "I am wrongUUID"
@@ -56,6 +61,7 @@ func TestInvalidPasteUUID(t *testing.T) {
 
 func TestPasteUUIDNotFound(t *testing.T) {
 
+	_ = initConfig()
 	router := setupRouter()
 
 	randomUUID := "ee6edb3a-db64-11eb-8d19-0242ac130003" // random UUID
@@ -71,6 +77,7 @@ func TestPasteUUIDNotFound(t *testing.T) {
 
 func TestPasteAdd(t *testing.T) {
 
+	_ = initConfig()
 	router := setupRouter()
 
 	newPaste := `{"name":"Very important paste",
@@ -111,6 +118,7 @@ func TestPasteAdd(t *testing.T) {
 
 func TestKillPastes(t *testing.T) {
 
+	_ = initConfig()
 	router := setupRouter()
 
 	newPaste := `{"name":"Very important paste",
@@ -134,6 +142,7 @@ func TestKillPastes(t *testing.T) {
 
 func TestPing(t *testing.T) {
 
+	_ = initConfig()
 	router := setupRouter()
 
 	req, _ := http.NewRequest("GET", "/ping", nil)
