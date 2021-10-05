@@ -1,9 +1,9 @@
 ![HZPaste](https://github.com/ep4sh/hzpaste/actions/workflows/go.yml/badge.svg?branch=master)  
 
 # HZPaste (REST API)
-**HZPaste** is a simple REST API app, that serve source code snippets.  
+**HZPaste** is a simple REST API app, which serves source code snippets.  
 **HZPaste** uses [gin](https://github.com/gin-gonic/gin) web framework.
-By default HZPaste running on port `:8888`
+By default HZPaste runs on port `:8888`
 
 ## Configuration
 
@@ -35,15 +35,18 @@ make swag-init
 
 ## Endpoints and features
 
+### UI  
+There is an amazing UI for hzpaste backend:  
+https://github.com/AlenaMaer/pastecodes
+
 ### Swagger
-`HZPaste` provides swagger documentation and UI:
+`HZPaste` provides swagger documentation:
 ```
 http://localhost:8888/swagger/index.html
 ```
 
 ### PGC
-HZPaste has PGC (Paste Garbage Collector), that sweeps and removes obsolete
-pastes from it's storage.
+HZPaste has PGC (Paste Garbage Collector), that sweeps and removes obsolete pastes from it's storage.
 
 ### Books
 I'm in love with books. If you want to thank me, just help me to buy books from the list
